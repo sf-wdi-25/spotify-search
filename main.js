@@ -28,41 +28,46 @@ $(document).ready(function() {
     var searchUrl = 'https://api.spotify.com/v1/search?type=track&q=' + searchTrack;
 
     // use AJAX to call spotify API
-    $.get(searchUrl, function (data) {
+    $.ajax({
+      url: searchUrl,
+      method: 'GET',
+      success: function (data) {
+        // track results are in an array called `items`
+        // which is nested in the `tracks` object
+        var trackResults = data.tracks.items;
+        console.log(trackResults);
 
-      // track results are in an array called `items`
-      // which is nested in the `tracks` object
-      var trackResults = data.tracks.items;
-      console.log(trackResults);
+        // hide loading gif
+        $loading.hide();
 
-      // hide loading gif
-      $loading.hide();
+        // only append results if there are any
+        if (trackResults.length > 0) {
 
-      // only append results if there are any
-      if (trackResults.length > 0) {
+          // iterate through results
+          trackResults.forEach(function (result, index) {
 
-        // iterate through results
-        trackResults.forEach(function (result, index) {
-          
-          // build object of data we want in our view
-          var trackData = {
-            albumArt: result.album.images.length > 0 ? result.album.images[0].url : null,
-            artist: result.artists[0].name,
-            name: result.name,
-            previewUrl: result.preview_url
-          };
+            // build object of data we want in our view
+            var trackData = {
+              albumArt: result.album.images.length > 0 ? result.album.images[0].url : null,
+              artist: result.artists[0].name,
+              name: result.name,
+              previewUrl: result.preview_url
+            };
 
-          // use data to construct HTML we want to show
-          var $trackHtml = '<div class="row"><div class="col-xs-4"><img src="' + trackData.albumArt + '" class="img-responsive"></div><div class="col-xs-8"><p><strong>' + trackData.name + '</strong> by ' + trackData.artist + '</p><p><a href="' + trackData.previewUrl + '" target="_blank" class="btn btn-sm btn-default">Preview <span class="glyphicon glyphicon-play"></span></a></p></div></div><hr>';
+            // use data to construct HTML we want to show
+            var $trackHtml = '<div class="row"><div class="col-xs-4"><img src="' + trackData.albumArt + '" class="img-responsive"></div><div class="col-xs-8"><p><strong>' + trackData.name + '</strong> by ' + trackData.artist + '</p><p><a href="' + trackData.previewUrl + '" target="_blank" class="btn btn-sm btn-default">Preview <span class="glyphicon glyphicon-play"></span></a></p></div></div><hr>';
 
-          // append HTML to the view
-          $results.append($trackHtml);
-        });
+            // append HTML to the view
+            $results.append($trackHtml);
+          });
 
-      // else let user know there are no results
-      } else {
-        $results.append('<p class="text-center">No results</p>');
-      }
+        // else let user know there are no results
+        } else {
+          $results.append('<p class="text-center">No results</p>');
+        }
+      } // end success
+
+
     });
 
     // reset the form
