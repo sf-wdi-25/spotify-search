@@ -1,1 +1,18 @@
 /* put custom styles in this file */
+
+input {
+	display: block;
+  	width: 70%;
+  	margin: 0 auto;
+  	position: relative;
+
+}
+img {
+	display: block;
+	margin: 0 auto;
+}
+
+.music {
+	padding-top: 15px;
+	text-align: center;
+}
